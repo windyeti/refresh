@@ -4,5 +4,8 @@ import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 
-ReactDOM.render(<App name={'Куку!'}/>, document.getElementById('root'));
+ReactDOM.render(
+    <App />,
+    document.getElementById('root'));
+
 registerServiceWorker();
