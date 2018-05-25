@@ -1,50 +1,41 @@
 import React from 'react';
-// import { Link, Router, Route } from 'react-router';
+import { connect } from 'react-redux';
 
-import { createStore } from 'redux';
+// import { Link, Router, Route } from 'react-router';
 
 import Dropdown from 'containers/dropdown';
 import Header from 'containers/header';
 import RegistrationForm from 'containers/registrationForm';
 
-import './App.css'
-
-const inputTrack = document.querySelectorAll('.input-track')[0];
-const btnSubmit = document.querySelectorAll('.submit-track')[0];
-const list = document.querySelectorAll('.list-track')[0];
-
-function reducerPlaylist(state = [], action) {
-    if(action.type === 'ADD_TRACK') {
-        return [
-            ...state, action.payload
-        ]
-    }
-}
-
-const store = createStore(reducerPlaylist);
-
-store.subscribe(() => {
-    list.innerHTML = '';
-    store.getState().forEach(track => {
-        const li = document.createElement('li');
-        li.textContent = track;
-        list.appendChild(li);
-    })
-});
-
-btnSubmit.addEventListener('click', () => {
-    const track = inputTrack.value;
-    inputTrack.value = '';
-    store.dispatch({ type : 'ADD_TRACK', payload : track});
-});
-
-
-
+import './App.css';
+import tracks from "reducers/tracks";
 
 class App extends React.Component {
+  addTrackToList() {
+    this.props.addTrack(this.input.value);
+    this.input.value = '';
+  }
   render() {
     return (
       <div className='container'>
+        <input
+          type="text"
+          ref={(input) => this.input = input}
+        />
+          <button
+            onClick={this.addTrackToList.bind(this)}
+          >
+            Принять
+          </button>
+          <ul>
+            {this.props.tracks.map((track, key) => {
+              return (
+                <li key={key}>
+                  {track}
+                </li>
+              )
+            })}
+          </ul>
         <Header />
         <Dropdown />
         <RegistrationForm />
@@ -52,5 +43,14 @@ class App extends React.Component {
     )
   }
 }
+const mapStateToProps = (state) => ({
+  tracks : state.tracks
+});
+const mapDispatchToProps = (dispatch) => ({
+  addTrack : (track) => dispatch({
+    type : 'ADD_TRACK',
+    payload : track
+  })
+});
 
-export default App;
+export default connect(mapStateToProps, mapDispatchToProps)(App);
